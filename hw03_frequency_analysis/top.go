@@ -2,6 +2,7 @@ package hw03frequencyanalysis
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -11,11 +12,17 @@ type ChartItem struct {
 	Amount int
 }
 
-func Top10(text string) []string {
-	// r := fmt.Sprint(len(text))
-	// fmt.Println("Length=" + r)
+// var splitter *regexp.Regexp = regexp.MustCompile(` *, *`)
+var splitterSpaces *regexp.Regexp = regexp.MustCompile("\\s+")
 
-	textSplitted := strings.Split(text, " ")
+func Top10(text string) []string {
+
+	textInOneRow := strings.ReplaceAll(text, "\n", "")
+	textWithoutTabs := strings.ReplaceAll(textInOneRow, "\t", "")
+	textWithSingleSpaceBetween := splitterSpaces.ReplaceAllString(textWithoutTabs, " ")
+
+	textSplitted := strings.Split(textWithSingleSpaceBetween, " ")
+	// textSplitted := splitter.Split(textWithSingleSpaceBetween, -1)
 	fmt.Println("==================")
 	fmt.Println(textSplitted)
 	fmt.Println("==================")
@@ -50,11 +57,9 @@ func countWordsInSlice(text []string) []ChartItem {
 					amount += 1
 				}
 			}
-
 			words = append(words, ChartItem{word, amount})
 		}
 	}
-
 	return words
 }
 
@@ -68,11 +73,9 @@ func contains(slice []ChartItem, item string) bool {
 }
 
 func charItemsToStrings(chars []ChartItem) []string {
-	s := make([]string, len(chars))
-
+	s := []string{}
 	for _, val := range chars {
 		s = append(s, val.Word)
 	}
-
 	return s
 }
